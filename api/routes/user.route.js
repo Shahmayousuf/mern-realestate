@@ -4,5 +4,5 @@ import { test, updateUser } from '../controllers/user.contoller.js';
 const router=express.Router();
 
 router.get('/test',test)
-router.post('/update/:',updateUser)
+router.post('/update/:id',updateUser)
 export default router
