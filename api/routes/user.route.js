@@ -5,4 +5,4 @@ const router=express.Router();
 
 router.get('/test',test)
 router.post('/update/:id',updateUser)
-export default router
+export default router 
