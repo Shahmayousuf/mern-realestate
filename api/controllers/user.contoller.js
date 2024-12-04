@@ -5,27 +5,36 @@ export const test = (req, res) => {
   res.send("helloooo");
 };
 export const updateUser = async (req, res, next) => {
-  if (req.user.id !== req.params.id)
-    return next(errorHandler(401, "you can only update your own account!"));
   try {
+    console.log("Request received for user update:", req.params.id);
+
+    // if (!req.user || req.user.id !== req.params.id) {
+
+    //   return next(errorHandler(401, "Unauthorized access!"));
+    // }
     if (req.body.password) {
       req.body.password = bcryptjs.hashSync(req.body.password, 10);
     }
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
       {
-        $set: {
-          username: req.body.username,
-          email: req.body.email,
-          password: req.body.password,
-          avatar: req.body.avatar,
-        },
+        $set:
+          // username: req.body.username,
+          // email: req.body.email,
+          // password: req.body.password,
+          // avatar: req.body.avatar,
+          req.body,
       },
       { new: true }
     );
+    if (!updatedUser) {
+      return next(errorHandler(404, "user not found"));
+    }
     const { password, ...rest } = updatedUser._doc;
     res.status(200).json(rest);
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    console.log("error during user update:", err);
+
+    next(err);
   }
 };
