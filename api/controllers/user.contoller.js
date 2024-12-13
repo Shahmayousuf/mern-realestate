@@ -11,7 +11,7 @@ export const updateUser = async (req, res, next) => {
     // if (!req.user || req.user.id !== req.params.id) {
 
     //   return next(errorHandler(401, "Unauthorized access!"));
-    // }
+    // } 
     if (req.body.password) {
       req.body.password = bcryptjs.hashSync(req.body.password, 10);
     }
