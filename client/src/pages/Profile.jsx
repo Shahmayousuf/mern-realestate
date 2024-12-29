@@ -1,20 +1,44 @@
 import React, { useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserStart,updateUserSuccess,updateUserFailure } from '../redux/user/userSlice.js';
 
 const Profile = () => {
   const fileRef=useRef(null)
   const { currentUser } = useSelector((state) => state.user);
   const [formData,setFormData]=useState({})
+  const dispatch=useDispatch()
   const handleChnage=(e)=>{
     setFormData({...formData,[e.target.id]: e.target.value})
-    console.log('====================================');
+    
     console.log(formData);
-    console.log('====================================');
+    
+  }
+  const handleSubmit=async(e)=>{
+    e.preventDefault()
+    try {
+      dispatch(updateUserStart());
+      const res=await fetch(`/api/user/update/${currentUser._id}`,{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+        },
+          body:JSON.stringify(formData)
+ 
+      })
+             const data=await res.json()
+             if(data.success==false){
+              dispatch(updateUserFailure(data.message))
+
+             }
+             dispatch(updateUserSuccess(data))
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
   }
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-center text-3xl font-bold my-7">Profile</h1>
-      <form className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <input type="file" ref={fileRef} hidden accept="image/*"/>
         <img
           src={currentUser.avatar}
