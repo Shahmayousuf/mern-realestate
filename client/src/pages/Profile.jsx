@@ -4,8 +4,9 @@ import { updateUserStart,updateUserSuccess,updateUserFailure } from '../redux/us
 
 const Profile = () => {
   const fileRef=useRef(null)
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser,loading,error } = useSelector((state) => state.user);
   const [formData,setFormData]=useState({})
+  const[updateSuccess,setUpdateSuccess]=useState()
   const dispatch=useDispatch()
   const handleChnage=(e)=>{
     setFormData({...formData,[e.target.id]: e.target.value})
@@ -31,6 +32,9 @@ const Profile = () => {
 
              }
              dispatch(updateUserSuccess(data))
+             setUpdateSuccess(updateUserSuccess)
+             
+
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
@@ -71,14 +75,16 @@ const Profile = () => {
           className=" border rounded-lg p-2"
           onChange={handleChnage}
         ></input>
-        <button className="bg-slate-600 text-white rounded-lg p-2 uppercase hover:opacity-95 disabled:opacity-80">
-          update
+        <button disabled={loading} className="bg-slate-600 text-white rounded-lg p-2 uppercase hover:opacity-95 disabled:opacity-80">
+        { loading?'Loading..': 'Update'}
         </button>
       </form>
       <div className="mt-5 flex justify-between ">
      <span className="text-red-700 cursor-pointer">Delete account</span>
        <span className="text-red-700 cursor-pointer">Sign Out</span>
        </div>
+       <p className="text-red-700 mt-5">{error?error:''}</p>
+       <p className="text-green-700 mt-5">{updateSuccess?'User is successfully updated':''}</p>
     </div>
   );
 };
