@@ -7,6 +7,8 @@ import {
   deleteUserStart,
   deleteUserFailure,
   deleteUserSuccess,
+  signOutUserFailure,
+  signOutUserSuccess,sigOutUserStart
 } from "../redux/user/userSlice.js";
 
 const Profile = () => {
@@ -57,6 +59,27 @@ const Profile = () => {
       dispatch(deleteUserFailure(error.message));
     }
   };
+  const handleSignOut=async()=>{
+    try {
+      dispatch(sigOutUserStart())
+      const res = await fetch('/api/auth/signout', {
+        method: 'GET',
+        credentials: 'include', // Important for cookie-based authentication
+      });
+      
+      const data=await res.json()
+      if (data.success===false){
+        dispatch(signOutUserFailure(data.message))
+       
+        // return;
+      }
+      dispatch(signOutUserSuccess(data))
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message))
+      
+      console.error(error.message);
+    }
+  }
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-center text-3xl font-bold my-7">Profile</h1>
@@ -76,7 +99,7 @@ const Profile = () => {
           className="border  rounded-lg p-2"
           onChange={handleChnage}
         ></input>
-        <input
+        <input  
           type="text"
           placeholder="email"
           id="email"
@@ -105,7 +128,7 @@ const Profile = () => {
         >
           Delete account
         </span>
-        <span className="text-red-700 cursor-pointer">Sign Out</span>
+        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
       <p className="text-red-700 mt-5">{error ? error : ""}</p>
       <p className="text-green-700 mt-5">
